@@ -453,10 +453,44 @@
   const recent = query(messagesRef, limitToLast(60));
   onChildAdded(recent, snap => displayMessage(snap.val()));
 
-  function sendMessage() {
+// ── BLOCKED WORDS — add yours to this list ──
+const BLOCKED_WORDS = [
+  'fuck',
+  'bitch',
+  'bastard',
+  'damn',
+  'crap',
+  'dick',
+  'cock',
+  'pussy',
+  'cunt',
+  'whore',
+  'slut',
+  'fag',
+  'nigga',
+  'nigger',
+  'kike',
+  'spic',
+  'chink',
+  'wetback',
+  'cracker',
+  'dyke',
+  'tranny',
+  'rape',
+  'molest',
+  'pedo',
+  'kill yourself',
+];
+
+function sendMessage() {
     const name = nameInput.value.trim() || 'anonymous';
     const text = msgInput.value.trim();
     if (!text) return;
+
+    // Filter check
+    const lower = text.toLowerCase();
+    const isBlocked = BLOCKED_WORDS.some(w => lower.includes(w.toLowerCase()));
+    if (isBlocked) return; // silently block — or replace `return` with an alert if you want a warning
     localStorage.setItem('chat_name', name);
     push(messagesRef, { name, text, timestamp: Date.now() });
     msgInput.value = '';
